@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Splitter</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #d1d5db;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: 5rem;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 0.50rem;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            padding: 1rem;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            font-size: 0.9rem;
+            min-width: 100px;
+        }
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        h3 { margin-top: 0; color: var(--primary); font-size: 1.25rem; margin-bottom: 1rem; }
+        h4 { margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1rem; color: var(--text); }
+
+        .input-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--text); }
+
+        input, select {
+            width: 100%;
+            padding: 0.625rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid var(--primary);
+            border-color: transparent;
+        }
+
+        button {
+            padding: 0.625rem 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        button:hover { background: var(--primary-dark); }
+        button.secondary { background: #4b5563; }
+        button.danger { background: var(--danger); }
+        button.small { width: auto; padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-top: 0; }
+        button.edit { background: #f59e0b; }
+
+        .flex { display: flex; gap: 0.5rem; }
+        .flex-grow { flex-grow: 1; }
+        .flex-wrap { flex-wrap: wrap; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+        .get { background: var(--success); }
+        .owe { background: var(--danger); }
+
+        .people-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+        .person-tag {
+            background: #e5e7eb;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .checkbox-item input { width: auto; margin: 0; }
+
+        .expense-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+        }
+        .expense-item:last-child { border-bottom: none; }
+
+        .stats-bar-container {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 5px 0 15px 0;
+        }
+        .stats-bar {
+            height: 100%;
+            background: var(--primary);
+        }
+
+        hr { border: 0; border-top: 1px solid #e5e7eb; margin: 1rem 0; }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            align-items: center;
+            z-index: 1000;
+        }
+        footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printSection, #printSection * { visibility: visible; }
+            #printSection { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>💰 Money Splitter</header>
+
+<nav class="tabs">
+    <button class="tab-btn active" onclick="showTab('tab-trips')">📁 Trips</button>
+    <button class="tab-btn" onclick="showTab('tab-expense')">➕ Add</button>
+    <button class="tab-btn" onclick="showTab('tab-history')">📜 History</button>
+    <button class="tab-btn" onclick="showTab('tab-analytics')">📊 Stats</button>
+    <button class="tab-btn" onclick="showTab('tab-settlement')">🤝 Settle</button>
+    <button class="tab-btn" onclick="showTab('tab-backup')">⚙️ Backup</button>
+</nav>
+
+<div class="container">
+
+    <!-- Trips Tab -->
+    <div id="tab-trips" class="tab-content active">
+        <div class="card">
+            <div class="flex" style="margin-bottom: 1rem;">
+                <button class="danger" onclick="startFresh()" style="margin-top: 0;">✨ Start Fresh</button>
+            </div>
+
+            <label>Current Trip / Folder</label>
+            <div class="flex">
+                <select id="tripSelector" onchange="switchTrip()" class="flex-grow"></select>
+                <button onclick="renameTrip()" class="secondary small" style="width: auto; margin-top: 0;">Rename</button>
+            </div>
+            <button onclick="createNewTrip()" class="secondary" style="margin-top: 0.5rem;">📁 Create New Trip</button>
+        </div>
+
+        <div class="card">
+            <h3>People</h3>
+            <div class="flex">
+                <input id="personName" placeholder="Enter name" class="flex-grow">
+                <button onclick="addPerson()" style="width: auto; margin-top: 0;">Add</button>
+            </div>
+            <div id="peopleList" class="people-list"></div>
+        </div>
+    </div>
+
+    <!-- Add Expense Tab -->
+    <div id="tab-expense" class="tab-content">
+        <div class="card">
+            <h3 id="formTitle">Add Expense</h3>
+
+            <div class="flex">
+                <div class="input-group flex-grow">
+                    <label for="category">Category / Description</label>
+                    <input id="category" placeholder="e.g. Dinner, Fuel, Hotel">
+                </div>
+                <div class="input-group">
+                    <label for="expenseDate">Date</label>
+                    <input type="date" id="expenseDate">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="payer">Who Paid?</label>
+                <select id="payer"></select>
+            </div>
+
+            <div class="input-group">
+                <label for="amount">Amount</label>
+                <div class="flex">
+                    <select id="currencySymbol" style="width: 80px;" onchange="updateCurrency()">
+                        <option value="₹">₹ INR</option>
+                        <option value="$">$ USD</option>
+                        <option value="€">€ EUR</option>
+                        <option value="£">£ GBP</option>
+                    </select>
+                    <input type="number" id="amount" placeholder="0.00" class="flex-grow">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Who was involved? (Exclude if needed)</label>
+                <div id="involvedPeople" class="checkbox-group"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="splitMode">Split Method</label>
+                <select id="splitMode" onchange="renderSplit()">
+                    <option value="equal">Split Equally</option>
+                    <option value="percentage">By Percentage</option>
+                    <option value="exact">By Exact Amount</option>
+                    <option value="ratio">By Ratio</option>
+                </select>
+            </div>
+
+            <div id="splitInputs"></div>
+
+            <button id="submitExpense" onclick="addExpense()">Add Expense</button>
+            <button id="cancelEdit" onclick="cancelEdit()" class="secondary" style="display:none;">Cancel Edit</button>
+        </div>
+    </div>
+
+    <!-- History Tab -->
+    <div id="tab-history" class="tab-content">
+        <div class="card">
+            <h3>Recent Expenses</h3>
+            <div class="input-group">
+                <input type="text" id="searchExpenses" placeholder="🔍 Search expenses..." oninput="renderExpenses()">
+            </div>
+            <div id="expenseList"></div>
+        </div>
+    </div>
+
+    <!-- Analytics Tab -->
+    <div id="tab-analytics" class="tab-content">
+        <div class="card">
+            <h3>Spending Analytics</h3>
+            <div id="categoryBreakdown"></div>
+        </div>
+    </div>
+
+    <!-- Settlement Tab -->
+    <div id="tab-settlement" class="tab-content">
+        <div class="card">
+            <h3>Individual Summary</h3>
+            <div id="summary"></div>
+            <button onclick="shareSummary()" class="secondary">Share Detailed Report</button>
+        </div>
+
+        <div class="card">
+            <h3>Suggested Settlement</h3>
+            <div id="settlement" style="margin-bottom: 1rem; font-weight: 500;"></div>
+        </div>
+    </div>
+
+    <!-- Backup/Settings Tab -->
+    <div id="tab-backup" class="tab-content">
+        <div class="card">
+            <h3>Report & Export</h3>
+            <div class="input-group">
+                <label>Report Header (for PDF)</label>
+                <div class="flex">
+                    <input type="text" id="reportTitle" placeholder="Title (e.g. Goa Trip)" class="flex-grow">
+                    <input type="date" id="reportDate">
+                </div>
+            </div>
+            <button onclick="printSettlement()">🖨️ Print / Save PDF</button>
+            <button onclick="exportToCSV()" class="secondary">📊 Export to CSV (Excel)</button>
+        </div>
+
+        <div class="card">
+            <h3>Settings & Backup</h3>
+            <div class="flex flex-wrap">
+                <button onclick="exportData()" class="secondary flex-grow">Export Backup</button>
+                <div style="position: relative;" class="flex-grow">
+                    <button class="secondary" style="width: 100%;">Import Backup</button>
+                    <input type="file" onchange="importData(event)" style="position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%;">
+                </div>
+                <button class="danger flex-grow" onclick="resetAll()">Reset All Trips</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <span>Dev by Akki</span>
+    <!--<a href="https://instagram.com/YOUR_INSTA_USERNAME">Instagram</a>
+    <a href="https://wa.me/YOUR_PHONE_NUMBER">WhatsApp</a>-->
+    <a href="mailto:aakhilesh2012@gmail.com?subject=Inquiry&body=Hello, I have a question...">Email Us</a>
+</footer>
+
+<div id="printSection" style="display:none;"></div>
+
+<script>
+    function showTab(tabId) {
+        // Hide all contents
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        // Show target content
+        document.getElementById(tabId).classList.add('active');
+        // Add active class to clicked button
+        const clickedBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick').includes(tabId));
+        if (clickedBtn) clickedBtn.classList.add('active');
+
+        // Scroll to top of tab content
+        window.scrollTo(0, 0);
+    }
+</script>
+
+<script src="js/trips.js"></script>
+<script src="js/expenses.js"></script>
+<script src="js/reports.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
