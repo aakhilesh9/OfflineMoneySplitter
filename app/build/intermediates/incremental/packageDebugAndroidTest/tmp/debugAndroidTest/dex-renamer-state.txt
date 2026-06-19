@@ -1,4 +1,0 @@
-#Sat May 16 02:38:33 IST 2026
-base.0=/home/flash/AndroidStudioProjects/Splitmoneyoffline/app/build/intermediates/dex/debugAndroidTest/mergeProjectDexDebugAndroidTest/0/classes.dex
-path.0=0/classes.dex
-renamed.0=classes.dex

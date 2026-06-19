@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Split Money Offline</string>
-    <style name="Theme.SplitMoneyOffline" parent="Theme.Material3.DayNight.NoActionBar">
-        
-        
-    </style>
-</resources>

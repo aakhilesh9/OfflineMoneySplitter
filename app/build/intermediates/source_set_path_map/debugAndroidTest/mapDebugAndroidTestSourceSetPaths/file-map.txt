@@ -1,4 +1,0 @@
-com.example.splitmoneyoffline.test.app-androidTest-0 /home/flash/AndroidStudioProjects/Splitmoneyoffline/app/build/generated/res/resValues/androidTest/debug
-com.example.splitmoneyoffline.test.app-mergeDebugAndroidTestResources-1 /home/flash/AndroidStudioProjects/Splitmoneyoffline/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
-com.example.splitmoneyoffline.test.app-mergeDebugAndroidTestResources-2 /home/flash/AndroidStudioProjects/Splitmoneyoffline/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
-com.example.splitmoneyoffline.test.app-debugAndroidTest-3 /home/flash/AndroidStudioProjects/Splitmoneyoffline/app/build/intermediates/merged_res/debugAndroidTest/mergeDebugAndroidTestResources
